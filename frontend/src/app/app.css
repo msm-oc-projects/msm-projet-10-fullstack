@@ -1,0 +1,269 @@
+:host {
+  display: block;
+}
+
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: -5rem;
+  z-index: 10;
+  padding: 0.75rem 1rem;
+  color: white;
+  background: #12213a;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+.site-header,
+.chat-shell {
+  width: min(46rem, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.site-header {
+  padding-block: 3rem 1.5rem;
+}
+
+.site-header h1 {
+  margin-block: 0.25rem 0.75rem;
+  font-size: clamp(2rem, 7vw, 3.5rem);
+  line-height: 1.05;
+}
+
+.site-header > p:last-child {
+  max-width: 42rem;
+  color: #43526a;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #0b5e55;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.panel {
+  border: 1px solid #c7d0dd;
+  border-radius: 1rem;
+  background: white;
+  box-shadow: 0 1rem 3rem rgb(18 33 58 / 8%);
+}
+
+.join-panel {
+  padding: clamp(1.25rem, 5vw, 2.5rem);
+}
+
+.join-panel form,
+.composer {
+  display: grid;
+  gap: 0.75rem;
+}
+
+label {
+  font-weight: 750;
+}
+
+.help {
+  margin: -0.25rem 0 0;
+  color: #536278;
+  font-size: 0.9rem;
+}
+
+input,
+textarea {
+  width: 100%;
+  border: 2px solid #75839a;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  color: #12213a;
+  background: white;
+  font: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus,
+button:focus-visible,
+.skip-link:focus {
+  outline: 3px solid #ffbf47;
+  outline-offset: 3px;
+}
+
+button {
+  width: fit-content;
+  border: 2px solid #0b5e55;
+  border-radius: 0.5rem;
+  padding: 0.7rem 1.1rem;
+  color: white;
+  background: #0b5e55;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #084941;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+button.secondary {
+  color: #12213a;
+  background: white;
+  border-color: #75839a;
+}
+
+.chat-panel {
+  overflow: hidden;
+}
+
+.room-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-bottom: 1px solid #d9e0e9;
+}
+
+.room-header h2 {
+  margin-block: 0.25rem;
+}
+
+.connection {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  color: #7a2c19;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.connection.connected {
+  color: #146b37;
+}
+
+.status-dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.error {
+  margin: 1rem;
+  border-left: 0.35rem solid #b42318;
+  padding: 0.85rem 1rem;
+  color: #6f1d16;
+  background: #fff2f0;
+}
+
+.messages {
+  height: min(42vh, 24rem);
+  margin: 0;
+  overflow-y: auto;
+  padding: 1rem;
+  background: #f5f7fa;
+  list-style: none;
+}
+
+.messages li + li {
+  margin-top: 0.75rem;
+}
+
+.messages article {
+  border: 1px solid #d7dee8;
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: white;
+}
+
+.messages article header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #43526a;
+  font-size: 0.85rem;
+}
+
+.messages article p {
+  margin-block: 0.5rem 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.empty {
+  padding: 2rem 1rem;
+  color: #536278;
+  text-align: center;
+}
+
+.composer {
+  padding: 1.25rem;
+  border-top: 1px solid #d9e0e9;
+}
+
+.composer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.composer-footer span {
+  color: #536278;
+  font-size: 0.85rem;
+}
+
+.composer-footer .limit {
+  color: #8b2e1b;
+  font-weight: 700;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 34rem) {
+  .room-header,
+  .composer-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  button {
+    min-height: 2.75rem;
+  }
+
+  .composer-footer button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}

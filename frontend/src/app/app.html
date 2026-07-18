@@ -1,0 +1,111 @@
+<a class="skip-link" href="#chat-main">Aller au tchat</a>
+
+<header class="site-header">
+  <p class="eyebrow">Your Car Your Way</p>
+  <h1>Preuve de concept du tchat</h1>
+  <p>
+    Ce salon démontre la communication temps réel et la persistance. Il ne
+    constitue pas une fonctionnalité de production.
+  </p>
+</header>
+
+<main id="chat-main" class="chat-shell">
+  <p class="sr-only" aria-live="polite">{{ announcement() }}</p>
+
+  @if (!joined()) {
+    <section class="panel join-panel" aria-labelledby="join-title">
+      <h2 id="join-title">Rejoindre le salon de démonstration</h2>
+      <form (ngSubmit)="join()">
+        <label for="author">Pseudonyme</label>
+        <p id="author-help" class="help">
+          Entre 2 et 40 caractères. Ce pseudonyme n'est pas une identité vérifiée.
+        </p>
+        <input
+          id="author"
+          name="author"
+          type="text"
+          minlength="2"
+          maxlength="40"
+          required
+          autocomplete="nickname"
+          [ngModel]="author()"
+          (ngModelChange)="updateAuthor($event)"
+          aria-describedby="author-help"
+        />
+        <button type="submit">Rejoindre</button>
+      </form>
+    </section>
+  } @else {
+    <section class="panel chat-panel" aria-labelledby="room-title">
+      <div class="room-header">
+        <div>
+          <p class="eyebrow">Salon</p>
+          <h2 id="room-title">Démonstration</h2>
+          <p class="connection" [class.connected]="isConnected()">
+            <span aria-hidden="true" class="status-dot"></span>
+            @switch (status()) {
+              @case ('connected') { Connecté }
+              @case ('connecting') { Connexion en cours }
+              @default { Déconnecté }
+            }
+          </p>
+        </div>
+        <button type="button" class="secondary" (click)="leave()">
+          Quitter
+        </button>
+      </div>
+
+      @if (error()) {
+        <div class="error" role="alert">
+          {{ error() }}
+        </div>
+      }
+
+      <ol
+        class="messages"
+        aria-label="Messages du salon"
+        aria-live="polite"
+        aria-relevant="additions"
+      >
+        @for (message of messages(); track message.id) {
+          <li>
+            <article>
+              <header>
+                <strong>{{ message.author }}</strong>
+                <time [attr.datetime]="message.sentAt">
+                  {{ message.sentAt | date: 'HH:mm:ss' }}
+                </time>
+              </header>
+              <p>{{ message.content }}</p>
+            </article>
+          </li>
+        } @empty {
+          <li class="empty">Aucun message. Vous pouvez commencer la conversation.</li>
+        }
+      </ol>
+
+      <form class="composer" (ngSubmit)="send()">
+        <label for="message">Votre message</label>
+        <textarea
+          id="message"
+          name="message"
+          rows="3"
+          maxlength="500"
+          required
+          [disabled]="!isConnected()"
+          [ngModel]="content()"
+          (ngModelChange)="updateContent($event)"
+          aria-describedby="message-count"
+        ></textarea>
+        <div class="composer-footer">
+          <span id="message-count" [class.limit]="remainingCharacters() < 50">
+            {{ remainingCharacters() }} caractères restants
+          </span>
+          <button type="submit" [disabled]="!isConnected() || !content().trim()">
+            Envoyer
+          </button>
+        </div>
+      </form>
+    </section>
+  }
+</main>
