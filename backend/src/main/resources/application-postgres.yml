@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/ycwy_chat}
+    username: ${DB_USERNAME:ycwy}
+    password: ${DB_PASSWORD:ycwy}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
