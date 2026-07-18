@@ -1,0 +1,8 @@
+backend/target/
+frontend/.angular/
+frontend/dist/
+frontend/node_modules/
+.idea/
+.vscode/settings.json
+*.iml
+*.log
