@@ -83,7 +83,10 @@ Dans un premier terminal :
 
 ```bash
 cd backend
-mvn spring-boot:run -Dspring-boot.run.profiles=postgres
+export DB_URL=jdbc:postgresql://localhost:5432/ycwy_chat
+export DB_USERNAME=ycwy
+export DB_PASSWORD=ycwy
+mvn spring-boot:run
 ```
 
 Dans un second terminal :
@@ -113,12 +116,12 @@ Cette dernière commande efface uniquement les messages de la base locale du PoC
 
 ## Démarrage simplifié avec H2
 
-Le profil par défaut utilise une base H2 en mémoire. Il permet de travailler
-sur le backend sans Docker :
+Le profil `dev` utilise une base H2 en mémoire. Il permet de travailler sur le
+backend sans Docker :
 
 ```bash
 cd msm-projet-10-fullstack/backend
-mvn spring-boot:run
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
 Les données H2 disparaissent à l'arrêt de l'application. PostgreSQL reste le
@@ -167,16 +170,21 @@ ajoute notamment `id`, `roomId` et `sentAt`.
 
 ## Configuration
 
-Le profil `postgres` accepte les variables suivantes :
+`application.yml` constitue la configuration de référence, utilisée en
+production et lors du démarrage local avec PostgreSQL. Elle exige les variables
+suivantes sans fournir de valeur par défaut :
 
-| Variable | Valeur locale par défaut |
+| Variable | Exemple local uniquement |
 |---|---|
 | `DB_URL` | `jdbc:postgresql://localhost:5432/ycwy_chat` |
 | `DB_USERNAME` | `ycwy` |
 | `DB_PASSWORD` | `ycwy` |
 
-Ces identifiants sont réservés au développement local. N'enregistrez jamais
-de secret réel dans Git.
+Cette configuration utilise `ddl-auto: validate`, active Flyway et masque les
+messages d'erreur internes. Le profil `dev` surcharge uniquement la base avec
+H2, utilise `ddl-auto: create-drop`, désactive Flyway et affiche les messages
+d'erreur pour faciliter le diagnostic local. Les identifiants ci-dessus sont
+réservés au développement local ; n'enregistrez jamais de secret réel dans Git.
 
 ## Problèmes fréquents
 
@@ -185,8 +193,8 @@ de secret réel dans Git.
 - **Le frontend ne joint pas le backend** : vérifiez que le backend répond sur
   <http://localhost:8080/actuator/health>.
 - **`npm start` échoue après un changement de dépendances** : relancez `npm ci`.
-- **La migration Flyway échoue** : vérifiez le profil `postgres`, les variables
-  de base et l'état du conteneur avec `docker compose ps`.
+- **La migration Flyway échoue** : vérifiez les variables de base et l'état du
+  conteneur avec `docker compose ps`.
 - **Les messages H2 ont disparu** : c'est normal après l'arrêt du backend.
 
 ## Contribution
