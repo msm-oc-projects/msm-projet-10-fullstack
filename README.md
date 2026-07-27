@@ -20,6 +20,11 @@ de location complète.
 Les conversations privées, pièces jointes, notifications, modération avancée,
 présence et authentification réelle sont hors périmètre.
 
+Cognito, Stripe et SES ne sont pas intégrés : ils ne participent pas au cas de
+tchat démontré. Leur branchement par ports et adaptateurs est planifié dans la
+proposition d'architecture. Le PoC valide uniquement PostgreSQL comme composant
+externe nécessaire à la persistance des messages.
+
 ## Stack technique
 
 - Java 21, Spring Boot et Maven ;
@@ -35,14 +40,13 @@ présence et authentification réelle sont hors périmètre.
 ```text
 .
 ├── .github/workflows/poc-ci.yml
-├── msm-projet-10-fullstack/
-│   ├── backend/
-│   │   └── src/main/java/.../chat/
-│   │       ├── domain/
-│   │       ├── application/
-│   │       └── infrastructure/
-│   ├── frontend/
-│   └── docker-compose.yml
+├── backend/
+│   └── src/main/java/.../chat/
+│       ├── domain/
+│       ├── application/
+│       └── infrastructure/
+├── frontend/
+├── docker-compose.yml
 └── README.md
 ```
 
@@ -67,15 +71,23 @@ Versions conseillées : Java 21, Node.js 24, npm 11, Maven 3.9 ou version
 compatible, Docker Engine récent avec Compose V2.
 
 Vous pouvez utiliser IntelliJ IDEA, VS Code ou un autre IDE prenant en charge
-Java 21 et Angular. Importez le dossier `backend` comme projet Maven et ouvrez
-le dossier `frontend` pour TypeScript.
+Java 21 et Angular. Clonez d'abord le dépôt, placez-vous à sa racine, importez
+`backend` comme projet Maven et ouvrez `frontend` pour TypeScript :
+
+```bash
+git clone https://github.com/msm-oc-projects/msm-projet-10-fullstack.git
+cd msm-projet-10-fullstack
+git status
+```
+
+La commande `git status` doit confirmer que vous êtes sur une branche et que
+l'arbre de travail est propre avant vos modifications.
 
 ## Démarrage rapide avec PostgreSQL
 
 Depuis la racine du repository :
 
 ```bash
-cd msm-projet-10-fullstack
 docker compose up -d
 ```
 
@@ -120,7 +132,7 @@ Le profil `dev` utilise une base H2 en mémoire. Il permet de travailler sur le
 backend sans Docker :
 
 ```bash
-cd msm-projet-10-fullstack/backend
+cd backend
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
@@ -132,14 +144,14 @@ mode représentatif de l'architecture cible.
 Tests backend :
 
 ```bash
-cd msm-projet-10-fullstack/backend
+cd backend
 mvn verify
 ```
 
 Tests et build frontend :
 
 ```bash
-cd msm-projet-10-fullstack/frontend
+cd frontend
 npm ci
 npm test -- --watch=false
 npm run build
@@ -149,8 +161,14 @@ Lorsque PostgreSQL, le backend et le frontend sont lancés, le test de fumée
 vérifie qu'un message est persisté puis diffusé :
 
 ```bash
-cd msm-projet-10-fullstack/frontend
+cd frontend
 npm run smoke
+```
+
+Le backend utilise un autre port ? Indiquez son URL sans modifier le script :
+
+```bash
+CHAT_BACKEND_URL=http://localhost:18080 npm run smoke
 ```
 
 Pour une vérification manuelle, ouvrez deux onglets sur
@@ -190,6 +208,9 @@ réservés au développement local ; n'enregistrez jamais de secret réel dans G
 
 - **Le port 5432 est occupé** : arrêtez l'autre instance PostgreSQL ou adaptez
   le port et `DB_URL`.
+- **Le port 8080 est occupé** : lancez le backend avec `--server.port=18080`,
+  adaptez le proxy Angular pour l'interface et utilisez `CHAT_BACKEND_URL` pour
+  le test de fumée.
 - **Le frontend ne joint pas le backend** : vérifiez que le backend répond sur
   <http://localhost:8080/actuator/health>.
 - **`npm start` échoue après un changement de dépendances** : relancez `npm ci`.

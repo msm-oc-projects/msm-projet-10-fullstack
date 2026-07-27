@@ -3,9 +3,12 @@ import { Client } from "@stomp/stompjs";
 const roomId = "demo";
 const clientMessageId = crypto.randomUUID();
 const timeoutMs = 10000;
+const backendUrl = new URL(process.env.CHAT_BACKEND_URL ?? "http://localhost:8080");
+const websocketUrl = new URL("/ws", backendUrl);
+websocketUrl.protocol = backendUrl.protocol === "https:" ? "wss:" : "ws:";
 
 const client = new Client({
-  brokerURL: "ws://localhost:8080/ws",
+  brokerURL: websocketUrl.toString(),
   reconnectDelay: 0,
 });
 
@@ -49,7 +52,7 @@ try {
   });
 
   const response = await fetch(
-    `http://localhost:8080/api/v1/chat/rooms/${roomId}/messages?limit=100`,
+    new URL(`/api/v1/chat/rooms/${roomId}/messages?limit=100`, backendUrl),
   );
   const history = await response.json();
   const persisted = history.some(
