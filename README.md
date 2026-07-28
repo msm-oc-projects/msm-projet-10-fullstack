@@ -255,15 +255,87 @@ réservés au développement local ; n'enregistrez jamais de secret réel dans G
 
 - **Le port 5432 est occupé** : arrêtez l'autre instance PostgreSQL ou adaptez
   le port et `DB_URL`.
-- **Le port 8080 est occupé** : lancez le backend avec `--server.port=18080`,
-  adaptez le proxy Angular pour l'interface et utilisez `CHAT_BACKEND_URL` pour
-  le test de fumée.
+- **Le port 8080 est occupé** : suivez la procédure détaillée ci-dessous pour
+  identifier le processus ou lancer le backend sur `18080`.
 - **Le frontend ne joint pas le backend** : vérifiez que le backend répond sur
   <http://localhost:8080/actuator/health>.
 - **`npm start` échoue après un changement de dépendances** : relancez `npm ci`.
 - **La migration Flyway échoue** : vérifiez les variables de base et l'état du
   conteneur avec `docker compose ps`.
 - **Les messages H2 ont disparu** : c'est normal après l'arrêt du backend.
+
+### Utiliser un autre port pour le backend
+
+Si Tomcat échoue avec `Address already in use` ou `Adresse déjà utilisée`, un
+autre processus écoute sur le port `8080`. Identifiez-le avant de décider de
+l'arrêter : il peut s'agir d'un proxy ou d'un service nécessaire à un autre
+projet.
+
+Linux :
+
+```bash
+sudo ss -ltnp 'sport = :8080'
+```
+
+Windows PowerShell :
+
+```powershell
+$connection = Get-NetTCPConnection -LocalPort 8080 -State Listen
+Get-Process -Id $connection.OwningProcess
+```
+
+Invite de commandes Windows (`cmd.exe`) :
+
+```bat
+netstat -ano | findstr :8080
+tasklist /FI "PID eq <PID>"
+```
+
+Arrêtez de préférence le service depuis son gestionnaire ou son terminal. Si
+le port doit rester occupé, lancez le backend sur `18080`.
+
+Linux, macOS, WSL ou Git Bash :
+
+```bash
+cd backend
+mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=18080
+```
+
+Windows PowerShell :
+
+```powershell
+cd backend
+mvn spring-boot:run "-Dspring-boot.run.arguments=--server.port=18080"
+```
+
+Invite de commandes Windows (`cmd.exe`) :
+
+```bat
+cd backend
+mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=18080
+```
+
+Vérifiez ensuite la santé du backend sur
+<http://localhost:18080/actuator/health>. Dans `frontend/proxy.conf.json`,
+remplacez les deux cibles `8080` par `18080` :
+
+```json
+{
+  "/api": {
+    "target": "http://localhost:18080",
+    "secure": false
+  },
+  "/ws": {
+    "target": "ws://localhost:18080",
+    "ws": true,
+    "secure": false
+  }
+}
+```
+
+Relancez `npm start` après cette modification. Pour le test de fumée, utilisez
+la syntaxe `CHAT_BACKEND_URL` correspondant à votre terminal, documentée dans
+la section **Vérifications**.
 
 ## Contribution
 
