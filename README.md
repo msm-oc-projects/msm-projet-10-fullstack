@@ -70,6 +70,14 @@ docker compose version
 Versions conseillées : Java 21, Node.js 24, npm 11, Maven 3.9 ou version
 compatible, Docker Engine récent avec Compose V2.
 
+Les commandes sans variables d'environnement fonctionnent dans Bash,
+PowerShell et `cmd.exe`. Lorsque la syntaxe diffère selon le terminal, les
+exemples ci-dessous fournissent un bloc pour chaque environnement :
+
+- Bash : Linux, macOS, WSL et Git Bash sous Windows ;
+- PowerShell : terminal PowerShell sous Windows ;
+- Invite de commandes : `cmd.exe` sous Windows.
+
 Vous pouvez utiliser IntelliJ IDEA, VS Code ou un autre IDE prenant en charge
 Java 21 et Angular. Clonez d'abord le dépôt, placez-vous à sa racine, importez
 `backend` comme projet Maven et ouvrez `frontend` pour TypeScript :
@@ -91,13 +99,36 @@ Depuis la racine du repository :
 docker compose up -d
 ```
 
-Dans un premier terminal :
+Dans un premier terminal, configurez la connexion à PostgreSQL et démarrez le
+backend avec la syntaxe correspondant à votre environnement.
+
+Linux, macOS, WSL ou Git Bash :
 
 ```bash
 cd backend
 export DB_URL=jdbc:postgresql://localhost:5432/ycwy_chat
 export DB_USERNAME=ycwy
 export DB_PASSWORD=ycwy
+mvn spring-boot:run
+```
+
+Windows PowerShell :
+
+```powershell
+cd backend
+$env:DB_URL = "jdbc:postgresql://localhost:5432/ycwy_chat"
+$env:DB_USERNAME = "ycwy"
+$env:DB_PASSWORD = "ycwy"
+mvn spring-boot:run
+```
+
+Invite de commandes Windows (`cmd.exe`) :
+
+```bat
+cd backend
+set DB_URL=jdbc:postgresql://localhost:5432/ycwy_chat
+set DB_USERNAME=ycwy
+set DB_PASSWORD=ycwy
 mvn spring-boot:run
 ```
 
@@ -165,10 +196,26 @@ cd frontend
 npm run smoke
 ```
 
-Le backend utilise un autre port ? Indiquez son URL sans modifier le script :
+Le backend utilise un autre port ? Indiquez son URL sans modifier le script.
+
+Linux, macOS, WSL ou Git Bash :
 
 ```bash
 CHAT_BACKEND_URL=http://localhost:18080 npm run smoke
+```
+
+Windows PowerShell :
+
+```powershell
+$env:CHAT_BACKEND_URL = "http://localhost:18080"
+npm run smoke
+```
+
+Invite de commandes Windows (`cmd.exe`) :
+
+```bat
+set CHAT_BACKEND_URL=http://localhost:18080
+npm run smoke
 ```
 
 Pour une vérification manuelle, ouvrez deux onglets sur
